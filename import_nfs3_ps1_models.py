@@ -89,10 +89,10 @@ def import_nfs3_ps1_models(context, file_path, clear_scene, m):
 	
 	for index in range(0, len(GeoMeshes)):
 		GeoMesh = GeoMeshes[index]
-		num_vrtx, num_unks, num_norm, num_plgn, pos, object_unk0, object_unk1, object_unk2, object_unk3, object_unk4, object_unk5, object_unk6, vertices, vertices_offset, unks, unks_offset, normals, normals_offset, faces = GeoMesh
+		num_vrtx, num_unks, num_norm, num_plgn, pos, object_unk0, object_unk1, object_unk2, object_unk3, object_unk4, object_unk5, object_unk6, vertices, offset, unks, unks_offset, normals, normals_offset, faces = GeoMesh
 		
 		if len(vertices) > 0:
-			obj = create_object(index, vertices, vertices_offset, unks, unks_offset, normals, normals_offset, faces)
+			obj = create_object(index, vertices, offset, unks, unks_offset, normals, normals_offset, faces)
 			obj["object_index"] = index
 			obj["object_unk0"] = int_to_id(object_unk0)
 			obj["object_unk1"] = int_to_id(object_unk1)
@@ -142,7 +142,7 @@ def read_GeoGeometry(file_path):
 
 def read_GeoMesh(f):
 	vertices = []
-	vertices_offset = []
+	offset = []
 	unks = []
 	unks_offset = []
 	normals = []
@@ -170,7 +170,7 @@ def read_GeoMesh(f):
 		vertex = [vertex[0]/VERT_SCALE, vertex[1]/VERT_SCALE, vertex[2]/VERT_SCALE]
 		vertices.append((vertex[0], vertex[1], vertex[2]))
 	if num_vrtx % 2 == 1:	#Data offset, happens when num_vrtx is odd
-		vertices_offset = f.read(0x6)
+		offset = f.read(0x6)
 	
 	for i in range(num_unks):
 		unk = struct.unpack('<I', f.read(0x4))[0]
@@ -189,7 +189,7 @@ def read_GeoMesh(f):
 		GeoPolygon = read_GeoPolygon(f)
 		polygons.append(GeoPolygon)
 	
-	GeoMesh = [num_vrtx, num_unks, num_norm, num_plgn, pos, unk0, unk1, unk2, unk3, unk4, unk5, unk6, vertices, vertices_offset, unks, unks_offset, normals, normals_offset, polygons]
+	GeoMesh = [num_vrtx, num_unks, num_norm, num_plgn, pos, unk0, unk1, unk2, unk3, unk4, unk5, unk6, vertices, offset, unks, unks_offset, normals, normals_offset, polygons]
 	
 	return GeoMesh
 
@@ -208,7 +208,7 @@ def read_GeoPolygon(f):
 	return GeoPolygon
 
 
-def create_object(index, vertices, vertices_offset, unks, unks_offset, normals, normals_offset, faces):
+def create_object(index, vertices, offset, unks, unks_offset, normals, normals_offset, faces):
 	geoPartName = get_geoPartNames(index)
 	
 	#==================================================================================================
@@ -336,8 +336,8 @@ def create_object(index, vertices, vertices_offset, unks, unks_offset, normals, 
 		me_ob.calc_normals()
 	
 	me_ob["unks"] = [int_to_id(i) for i in unks]
-	if vertices_offset:
-		me_ob["vertices_offset"] = bytes_to_id(vertices_offset)
+	if offset:
+		me_ob["offset"] = bytes_to_id(offset)
 	if unks_offset:
 		me_ob["unks_offset"] = bytes_to_id(unks_offset)
 	if normals_offset:
