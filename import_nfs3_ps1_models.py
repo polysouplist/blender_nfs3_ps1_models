@@ -174,7 +174,7 @@ def read_GeoMesh(f):
 	
 	for i in range(num_unks):
 		unk = struct.unpack('<I', f.read(0x4))[0]
-		unks.append((unk0))
+		unks.append((unk))
 	if num_unks % 2 == 1:	#Data offset, happens when num_unks is odd
 		unks_offset = f.read(0x4)
 	
