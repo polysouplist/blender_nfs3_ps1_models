@@ -512,7 +512,7 @@ def register():
 	pcoll = bpy.utils.previews.new()
 	
 	my_icons_dir = os.path.join(os.path.dirname(__file__), "polly_icons")
-	pcoll.load("my_icon", os.path.join(my_icons_dir, "nfs3_icon.png"), 'IMAGE')
+	pcoll.load("my_icon", os.path.join(my_icons_dir, "nfs3_ps1_icon.png"), 'IMAGE')
 
 	preview_collections["main"] = pcoll
 	
